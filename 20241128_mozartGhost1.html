@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Net App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: lime;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #logo {
+      font-size: 3rem;
+      margin-top: 50px;
+      color: hotpink;
+      text-shadow: 0 0 5px cyan, 0 0 10px lime;
+      animation: glow 1s infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px cyan, 0 0 10px lime;
+      }
+      to {
+        text-shadow: 0 0 10px cyan, 0 0 20px lime;
+      }
+    }
+
+    #pi-symbol {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 2rem;
+      color: hotpink;
+      cursor: pointer;
+      text-shadow: 0 0 5px cyan, 0 0 10px lime;
+      animation: glow 1s infinite alternate;
+      transition: transform 0.3s;
+    }
+
+    #pi-symbol:hover {
+      transform: scale(1.2);
+    }
+
+    #terminal {
+      margin: 20px auto;
+      font-size: 1.2rem;
+      color: lime;
+      background: rgba(0, 0, 0, 0.8); /* Semi-transparent background for readability */
+      display: block;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-align: left;
+      width: 60%;
+      max-width: 800px;
+      height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px lime;
+    }
+
+    #output {
+      white-space: pre-wrap; /* Ensures text breaks onto the next line */
+    }
+
+    #input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: lime;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.2rem;
+      outline: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="logo">MOZART'S GHOST</div>
+  <div id="terminal">
+    <div id="output">
+      >>> Welcome to Mozart's Ghost<br>
+      >>> Type "help" for a list of commands<br>
+    </div>
+    <input id="input" type="text" placeholder="Type a command..." onkeydown="handleInput(event)">
+  </div>
+  <div id="pi-symbol" onclick="launchTabs()">&#960;</div>
+
+  <script>
+    // Audio for music control
+    const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+
+    // Terminal Commands
+    const output = document.getElementById('output');
+    const input = document.getElementById('input');
+
+    function handleInput(event) {
+      if (event.key === 'Enter') {
+        const command = input.value.trim();
+        input.value = ''; // Clear the input
+        processCommand(command);
+      }
+    }
+
+    function processCommand(command) {
+      let response = '';
+      switch (command.toLowerCase()) {
+        case 'help':
+          response = 'Available commands: help, about, clear, play, stop';
+          break;
+        case 'about':
+          response = 'Mozart\'s Ghost - Bringing retro vibes to life!';
+          break;
+        case 'clear':
+          output.innerHTML = ''; // Clear the terminal
+          return; // Skip appending further text
+        case 'play':
+          playMusic();
+          response = 'Playing music...';
+          break;
+        case 'stop':
+          stopMusic();
+          response = 'Music stopped.';
+          break;
+        default:
+          response = `Unknown command: ${command}`;
+      }
+      output.innerHTML += `>>> ${command}<br>${response}<br>`;
+      output.scrollTop = output.scrollHeight; // Auto-scroll to the bottom
+    }
+
+    // Music Controls
+    function playMusic() {
+      audio.loop = true;
+      audio.play();
+    }
+
+    function stopMusic() {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+
+    // Launch Tabs Based on Cookies
+    function launchTabs() {
+      // Example cookie parsing logic
+      const cookies = document.cookie.split("; ").reduce((acc, cookie) => {
+        const [key, value] = cookie.split("=");
+        acc[key] = decodeURIComponent(value);
+        return acc;
+      }, {});
+
+      // URLs based on user preferences from cookies
+      const urls = [
+        `https://www.google.com/search?q=${cookies.interest1 || 'default'}`,
+        `https://www.bing.com/search?q=${cookies.interest2 || 'default'}`,
+        `https://www.wikipedia.org/wiki/${cookies.interest3 || 'default'}`,
+        `https://www.reddit.com/search/?q=${cookies.interest4 || 'default'}`,
+        `https://www.youtube.com/results?search_query=${cookies.interest5 || 'default'}`
+      ];
+
+      // Open tabs
+      urls.forEach((url) => {
+        window.open(url, '_blank');
+      });
+    }
+
+    // Example: Setting cookies for testing (Remove in production)
+    document.cookie = "interest1=technology";
+    document.cookie = "interest2=cybersecurity";
+    document.cookie = "interest3=artificial intelligence";
+    document.cookie = "interest4=web development";
+    document.cookie = "interest5=music production";
+  </script>
+</body>
+</html>
