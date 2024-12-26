@@ -5,6 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Net App</title>
   <style>
+    /* Floating Notes Styles */
+    .note {
+      position: absolute;
+      font-size: 2rem;
+      color: white;
+      opacity: 0.7;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      animation: float 5s linear infinite, glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(100vh);
+      }
+      to {
+        transform: translateY(-10vh);
+      }
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 255, 255, 0.3);
+      }
+      to {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    /* General Page Styles */
     body {
       margin: 0;
       padding: 0;
@@ -21,15 +50,6 @@
       color: hotpink;
       text-shadow: 0 0 5px cyan, 0 0 10px lime;
       animation: glow 1s infinite alternate;
-    }
-
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 5px cyan, 0 0 10px lime;
-      }
-      to {
-        text-shadow: 0 0 10px cyan, 0 0 20px lime;
-      }
     }
 
     #pi-symbol {
@@ -52,8 +72,7 @@
       margin: 20px auto;
       font-size: 1.2rem;
       color: lime;
-      background: rgba(0, 0, 0, 0.8); /* Semi-transparent background for readability */
-      display: block;
+      background: rgba(0, 0, 0, 0.8);
       padding: 10px 20px;
       border-radius: 5px;
       text-align: left;
@@ -65,7 +84,7 @@
     }
 
     #output {
-      white-space: pre-wrap; /* Ensures text breaks onto the next line */
+      white-space: pre-wrap;
     }
 
     #input {
@@ -87,94 +106,105 @@
       >>> Welcome to Mozart's Ghost<br>
       >>> Type "help" for a list of commands<br>
     </div>
-    <input id="input" type="text" placeholder="Type a command..." onkeydown="handleInput(event)">
+    <input id="input" type="text" placeholder="Type a command..." aria-label="Command input field">
   </div>
   <div id="pi-symbol" onclick="launchTabs()">&#960;</div>
 
   <script>
-    // Audio for music control
-    const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    (() => {
+      const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+      const output = document.getElementById('output');
+      const input = document.getElementById('input');
+      const notes = ['♪', '♫', '♬', '♩', '♭', '♯'];
 
-    // Terminal Commands
-    const output = document.getElementById('output');
-    const input = document.getElementById('input');
-
-    function handleInput(event) {
-      if (event.key === 'Enter') {
-        const command = input.value.trim();
-        input.value = ''; // Clear the input
-        processCommand(command);
+      // Create Floating Notes
+      function createNote() {
+        const note = document.createElement('div');
+        note.className = 'note';
+        note.textContent = notes[Math.floor(Math.random() * notes.length)];
+        note.style.left = Math.random() * 100 + 'vw';
+        note.style.fontSize = Math.random() * 2 + 1 + 'rem';
+        document.body.appendChild(note);
+        setTimeout(() => note.remove(), 5000);
       }
-    }
 
-    function processCommand(command) {
-      let response = '';
-      switch (command.toLowerCase()) {
-        case 'help':
-          response = 'Available commands: help, about, clear, play, stop';
-          break;
-        case 'about':
-          response = 'Mozart\'s Ghost - Bringing retro vibes to life!';
-          break;
-        case 'clear':
-          output.innerHTML = ''; // Clear the terminal
-          return; // Skip appending further text
-        case 'play':
-          playMusic();
-          response = 'Playing music...';
-          break;
-        case 'stop':
-          stopMusic();
-          response = 'Music stopped.';
-          break;
-        default:
-          response = `Unknown command: ${command}`;
+      setInterval(createNote, 500);
+
+      // Handle Terminal Input
+      function handleInput(event) {
+        if (event.key === 'Enter') {
+          const command = input.value.trim();
+          input.value = '';
+          processCommand(command);
+        }
       }
-      output.innerHTML += `>>> ${command}<br>${response}<br>`;
-      output.scrollTop = output.scrollHeight; // Auto-scroll to the bottom
-    }
 
-    // Music Controls
-    function playMusic() {
-      audio.loop = true;
-      audio.play();
-    }
+      function processCommand(command) {
+        let response = '';
+        switch (command.toLowerCase()) {
+          case 'help':
+            response = 'Available commands: help, about, clear, play, stop';
+            break;
+          case 'about':
+            response = "Mozart's Ghost - Bringing retro vibes to life!";
+            break;
+          case 'clear':
+            output.innerHTML = '';
+            return;
+          case 'play':
+            playMusic();
+            response = 'Playing music...';
+            break;
+          case 'stop':
+            stopMusic();
+            response = 'Music stopped.';
+            break;
+          default:
+            response = `Unknown command: ${command}`;
+        }
+        output.innerHTML += `>>> ${command}<br>${response}<br>`;
+        output.scrollTop = output.scrollHeight;
+      }
 
-    function stopMusic() {
-      audio.pause();
-      audio.currentTime = 0;
-    }
+      // Music Controls
+      function playMusic() {
+        audio.loop = true;
+        audio.play();
+      }
 
-    // Launch Tabs Based on Cookies
-    function launchTabs() {
-      // Example cookie parsing logic
-      const cookies = document.cookie.split("; ").reduce((acc, cookie) => {
-        const [key, value] = cookie.split("=");
-        acc[key] = decodeURIComponent(value);
-        return acc;
-      }, {});
+      function stopMusic() {
+        audio.pause();
+        audio.currentTime = 0;
+      }
 
-      // URLs based on user preferences from cookies
-      const urls = [
-        `https://www.google.com/search?q=${cookies.interest1 || 'default'}`,
-        `https://www.bing.com/search?q=${cookies.interest2 || 'default'}`,
-        `https://www.wikipedia.org/wiki/${cookies.interest3 || 'default'}`,
-        `https://www.reddit.com/search/?q=${cookies.interest4 || 'default'}`,
-        `https://www.youtube.com/results?search_query=${cookies.interest5 || 'default'}`
-      ];
+      // Launch Tabs Based on Cookies
+      function launchTabs() {
+        const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+          const [key, value] = cookie.split('=');
+          acc[key] = decodeURIComponent(value);
+          return acc;
+        }, {});
 
-      // Open tabs
-      urls.forEach((url) => {
-        window.open(url, '_blank');
-      });
-    }
+        const urls = [
+          `https://www.google.com/search?q=${cookies.interest1 || 'default'}`,
+          `https://www.bing.com/search?q=${cookies.interest2 || 'default'}`,
+          `https://www.wikipedia.org/wiki/${cookies.interest3 || 'default'}`,
+          `https://www.reddit.com/search/?q=${cookies.interest4 || 'default'}`,
+          `https://www.youtube.com/results?search_query=${cookies.interest5 || 'default'}`
+        ];
 
-    // Example: Setting cookies for testing (Remove in production)
-    document.cookie = "interest1=technology";
-    document.cookie = "interest2=cybersecurity";
-    document.cookie = "interest3=artificial intelligence";
-    document.cookie = "interest4=web development";
-    document.cookie = "interest5=music production";
+        urls.forEach((url) => window.open(url, '_blank'));
+      }
+
+      input.addEventListener('keydown', handleInput);
+
+      // Set Example Cookies (For Testing)
+      document.cookie = "interest1=technology";
+      document.cookie = "interest2=cybersecurity";
+      document.cookie = "interest3=artificial intelligence";
+      document.cookie = "interest4=web development";
+      document.cookie = "interest5=music production";
+    })();
   </script>
 </body>
 </html>
