@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Net App</title>
   <style>
-    /* General styles omitted for brevity; include your previous styles */
+    /* Add your styles here; reusing the previous styles */
   </style>
 </head>
 <body>
@@ -21,10 +21,11 @@
 
   <script>
     (() => {
-      const notes = ['♪', '♫', '♬', '♩', '♭', '♯'];
       const output = document.getElementById('output');
       const input = document.getElementById('input');
+      const notes = ['♪', '♫', '♬', '♩', '♭', '♯'];
       let noteInterval;
+      let isMusicPlaying = false;
       const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
 
       // Function to create random floating notes
@@ -37,11 +38,10 @@
         note.style.animationDuration = Math.random() * 3 + 2 + 's';
         document.body.appendChild(note);
 
-        // Remove the note after animation
-        setTimeout(() => note.remove(), 5000);
+        setTimeout(() => note.remove(), 5000); // Remove the note after animation
       }
 
-      // Start or stop note generation
+      // Toggle Notes
       function toggleNotes(start) {
         if (start) {
           noteInterval = setInterval(createNote, 500);
@@ -52,15 +52,25 @@
         }
       }
 
-      // Terminal Input Logic
-      function handleInput(event) {
-        if (event.key === 'Enter') {
-          const command = input.value.trim();
-          input.value = '';
-          processCommand(command);
+      // Play Music
+      function playMusic() {
+        if (!isMusicPlaying) {
+          audio.loop = true;
+          audio.play();
+          isMusicPlaying = true;
         }
       }
 
+      // Stop Music
+      function stopMusic() {
+        if (isMusicPlaying) {
+          audio.pause();
+          audio.currentTime = 0; // Reset playback
+          isMusicPlaying = false;
+        }
+      }
+
+      // Process Terminal Commands
       function processCommand(command) {
         let response = '';
         switch (command.toLowerCase()) {
@@ -94,25 +104,17 @@
         output.scrollTop = output.scrollHeight;
       }
 
-      function playMusic() {
-        if (audio.paused) {
-          audio.loop = true;
-          audio.play();
+      // Handle Input
+      function handleInput(event) {
+        if (event.key === 'Enter') {
+          const command = input.value.trim();
+          input.value = '';
+          processCommand(command);
         }
       }
 
-      function stopMusic() {
-        if (!audio.paused) {
-          audio.pause();
-          audio.currentTime = 0; // Reset playback to the start
-        }
-      }
-
-      // Event Listener for Input
       input.addEventListener('keydown', handleInput);
     })();
   </script>
 </body>
 </html>
-
-
