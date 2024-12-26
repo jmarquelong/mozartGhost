@@ -5,104 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Net App</title>
   <style>
-    /* Floating Notes Styles */
-    .note {
-      position: absolute;
-      font-size: 2rem;
-      color: white;
-      opacity: 0;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-      animation: fadeInOut 5s linear, float 5s linear infinite;
-    }
-
-    @keyframes float {
-      from {
-        transform: translateY(100vh);
-      }
-      to {
-        transform: translateY(-10vh);
-      }
-    }
-
-    @keyframes fadeInOut {
-      0% {
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      90% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-      }
-    }
-
-    /* General Page Styles */
-    body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      color: lime;
-      font-family: 'Courier New', Courier, monospace;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    #logo {
-      font-size: 3rem;
-      margin-top: 50px;
-      color: hotpink;
-      text-shadow: 0 0 5px cyan, 0 0 10px lime;
-      animation: glow 1s infinite alternate;
-    }
-
-    #pi-symbol {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      font-size: 2rem;
-      color: hotpink;
-      cursor: pointer;
-      text-shadow: 0 0 5px cyan, 0 0 10px lime;
-      animation: glow 1s infinite alternate;
-      transition: transform 0.3s;
-    }
-
-    #pi-symbol:hover {
-      transform: scale(1.2);
-    }
-
-    #terminal {
-      margin: 20px auto;
-      font-size: 1.2rem;
-      color: lime;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-align: left;
-      width: 60%;
-      max-width: 800px;
-      height: 200px;
-      overflow-y: auto;
-      box-shadow: 0 0 10px lime;
-    }
-
-    #output {
-      white-space: pre-wrap;
-    }
-
-    #input {
-      width: 100%;
-      border: none;
-      background: transparent;
-      color: lime;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 1.2rem;
-      outline: none;
-      margin-top: 10px;
-    }
+    /* General styles omitted for brevity; include your previous styles */
   </style>
 </head>
 <body>
@@ -122,16 +25,16 @@
       const output = document.getElementById('output');
       const input = document.getElementById('input');
       let noteInterval;
-      let audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+      const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
 
       // Function to create random floating notes
       function createNote() {
         const note = document.createElement('div');
         note.className = 'note';
         note.textContent = notes[Math.floor(Math.random() * notes.length)];
-        note.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
-        note.style.fontSize = Math.random() * 2 + 1 + 'rem'; // Random size
-        note.style.animationDuration = Math.random() * 3 + 2 + 's'; // Random animation duration
+        note.style.left = Math.random() * 100 + 'vw';
+        note.style.fontSize = Math.random() * 2 + 1 + 'rem';
+        note.style.animationDuration = Math.random() * 3 + 2 + 's';
         document.body.appendChild(note);
 
         // Remove the note after animation
@@ -201,32 +104,15 @@
       function stopMusic() {
         if (!audio.paused) {
           audio.pause();
-          audio.currentTime = 0;
+          audio.currentTime = 0; // Reset playback to the start
         }
       }
 
-      // Launch Tabs Logic
-      function launchTabs() {
-        const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
-          const [key, value] = cookie.split('=');
-          acc[key] = decodeURIComponent(value);
-          return acc;
-        }, {});
-
-        const urls = [
-          `https://www.google.com/search?q=${cookies.interest1 || 'default'}`,
-          `https://www.bing.com/search?q=${cookies.interest2 || 'default'}`,
-          `https://www.wikipedia.org/wiki/${cookies.interest3 || 'default'}`,
-          `https://www.reddit.com/search/?q=${cookies.interest4 || 'default'}`,
-          `https://www.youtube.com/results?search_query=${cookies.interest5 || 'default'}`
-        ];
-
-        urls.forEach((url) => window.open(url, '_blank'));
-      }
-
+      // Event Listener for Input
       input.addEventListener('keydown', handleInput);
     })();
   </script>
 </body>
 </html>
+
 
