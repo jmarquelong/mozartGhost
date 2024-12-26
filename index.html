@@ -116,7 +116,16 @@
       const notes = ['♪', '♫', '♬', '♩', '♭', '♯'];
       let noteInterval;
       let isMusicPlaying = false;
-      const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+
+      // Create an Audio Context for Firefox Compatibility
+      let audioContext;
+      let audio;
+      if (typeof AudioContext !== 'undefined') {
+        audioContext = new AudioContext();
+        audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+      } else {
+        alert('Your browser does not support audio playback.');
+      }
 
       // Create Floating Notes
       function createNote() {
@@ -150,16 +159,18 @@
 
       // Play Music
       function playMusic() {
-        if (!isMusicPlaying) {
+        if (audio && !isMusicPlaying) {
           audio.loop = true;
-          audio.play();
+          audio.play().catch((err) => {
+            console.error('Playback error:', err);
+          });
           isMusicPlaying = true;
         }
       }
 
       // Stop Music
       function stopMusic() {
-        if (isMusicPlaying) {
+        if (audio && isMusicPlaying) {
           audio.pause();
           audio.currentTime = 0;
           isMusicPlaying = false;
