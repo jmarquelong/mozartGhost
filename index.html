@@ -112,25 +112,30 @@
 
   <script>
     (() => {
-      const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-      const output = document.getElementById('output');
-      const input = document.getElementById('input');
       const notes = ['♪', '♫', '♬', '♩', '♭', '♯'];
 
-      // Create Floating Notes
+      // Function to create random floating notes
       function createNote() {
         const note = document.createElement('div');
         note.className = 'note';
         note.textContent = notes[Math.floor(Math.random() * notes.length)];
-        note.style.left = Math.random() * 100 + 'vw';
-        note.style.fontSize = Math.random() * 2 + 1 + 'rem';
+        note.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+        note.style.fontSize = Math.random() * 2 + 1 + 'rem'; // Random size
+        note.style.animationDuration = Math.random() * 3 + 2 + 's'; // Random animation duration
         document.body.appendChild(note);
+
+        // Remove the note after animation
         setTimeout(() => note.remove(), 5000);
       }
 
+      // Generate notes periodically
       setInterval(createNote, 500);
 
-      // Handle Terminal Input
+      // Terminal Input Logic
+      const output = document.getElementById('output');
+      const input = document.getElementById('input');
+      const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+
       function handleInput(event) {
         if (event.key === 'Enter') {
           const command = input.value.trim();
@@ -166,7 +171,6 @@
         output.scrollTop = output.scrollHeight;
       }
 
-      // Music Controls
       function playMusic() {
         audio.loop = true;
         audio.play();
@@ -177,7 +181,7 @@
         audio.currentTime = 0;
       }
 
-      // Launch Tabs Based on Cookies
+      // Launch Tabs Logic
       function launchTabs() {
         const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
           const [key, value] = cookie.split('=');
@@ -197,13 +201,6 @@
       }
 
       input.addEventListener('keydown', handleInput);
-
-      // Set Example Cookies (For Testing)
-      document.cookie = "interest1=technology";
-      document.cookie = "interest2=cybersecurity";
-      document.cookie = "interest3=artificial intelligence";
-      document.cookie = "interest4=web development";
-      document.cookie = "interest5=music production";
     })();
   </script>
 </body>
