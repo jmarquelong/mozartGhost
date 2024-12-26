@@ -10,9 +10,9 @@
       position: absolute;
       font-size: 2rem;
       color: white;
-      opacity: 0.7;
+      opacity: 0;
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-      animation: float 5s linear infinite, glow 3s ease-in-out infinite alternate;
+      animation: fadeInOut 5s linear, float 5s linear infinite;
     }
 
     @keyframes float {
@@ -24,12 +24,18 @@
       }
     }
 
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 255, 255, 0.3);
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
       }
-      to {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 255, 255, 0.6);
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
       }
     }
 
@@ -113,6 +119,9 @@
   <script>
     (() => {
       const notes = ['♪', '♫', '♬', '♩', '♭', '♯'];
+      const output = document.getElementById('output');
+      const input = document.getElementById('input');
+      let noteInterval;
 
       // Function to create random floating notes
       function createNote() {
@@ -128,14 +137,18 @@
         setTimeout(() => note.remove(), 5000);
       }
 
-      // Generate notes periodically
-      setInterval(createNote, 500);
+      // Start or stop note generation
+      function toggleNotes(start) {
+        if (start) {
+          noteInterval = setInterval(createNote, 500);
+          output.innerHTML += `>>> Notes started!<br>`;
+        } else {
+          clearInterval(noteInterval);
+          output.innerHTML += `>>> Notes stopped!<br>`;
+        }
+      }
 
       // Terminal Input Logic
-      const output = document.getElementById('output');
-      const input = document.getElementById('input');
-      const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-
       function handleInput(event) {
         if (event.key === 'Enter') {
           const command = input.value.trim();
@@ -148,7 +161,7 @@
         let response = '';
         switch (command.toLowerCase()) {
           case 'help':
-            response = 'Available commands: help, about, clear, play, stop';
+            response = 'Available commands: help, about, clear, play, stop, notes start, notes stop';
             break;
           case 'about':
             response = "Mozart's Ghost - Bringing retro vibes to life!";
@@ -164,6 +177,12 @@
             stopMusic();
             response = 'Music stopped.';
             break;
+          case 'notes start':
+            toggleNotes(true);
+            return;
+          case 'notes stop':
+            toggleNotes(false);
+            return;
           default:
             response = `Unknown command: ${command}`;
         }
@@ -172,11 +191,13 @@
       }
 
       function playMusic() {
+        const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
         audio.loop = true;
         audio.play();
       }
 
       function stopMusic() {
+        const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
         audio.pause();
         audio.currentTime = 0;
       }
