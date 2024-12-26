@@ -5,7 +5,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Net App</title>
   <style>
-    /* Add your styles here; reusing the previous styles */
+    body {
+      margin: 0;
+      background: black;
+      color: lime;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+    }
+    #logo {
+      font-size: 3rem;
+      margin: 20px;
+    }
+    #terminal {
+      width: 80%;
+      max-width: 800px;
+      margin: 20px auto;
+      background: rgba(0, 0, 0, 0.9);
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px lime;
+    }
+    #output {
+      overflow-y: auto;
+      height: 150px;
+      white-space: pre-wrap;
+    }
+    #input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: lime;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.2rem;
+      outline: none;
+    }
+    #pi-symbol {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: hotpink;
+      text-shadow: 0 0 5px cyan, 0 0 10px lime;
+    }
+    #pi-symbol:hover {
+      transform: scale(1.2);
+      transition: transform 0.3s;
+    }
+    .note {
+      position: absolute;
+      font-size: 2rem;
+      color: white;
+      opacity: 0;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      animation: fadeInOut 5s linear, float 5s linear infinite;
+    }
+    @keyframes float {
+      from {
+        transform: translateY(100vh);
+      }
+      to {
+        transform: translateY(-10vh);
+      }
+    }
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -15,20 +91,21 @@
       >>> Welcome to Mozart's Ghost<br>
       >>> Type "help" for a list of commands<br>
     </div>
-    <input id="input" type="text" placeholder="Type a command..." aria-label="Command input field">
+    <input id="input" type="text" placeholder="Type a command...">
   </div>
-  <div id="pi-symbol" onclick="launchTabs()">&#960;</div>
+  <div id="pi-symbol">&#960;</div>
 
   <script>
     (() => {
       const output = document.getElementById('output');
       const input = document.getElementById('input');
+      const piSymbol = document.getElementById('pi-symbol');
       const notes = ['♪', '♫', '♬', '♩', '♭', '♯'];
       let noteInterval;
       let isMusicPlaying = false;
       const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
 
-      // Function to create random floating notes
+      // Create Floating Notes
       function createNote() {
         const note = document.createElement('div');
         note.className = 'note';
@@ -38,16 +115,22 @@
         note.style.animationDuration = Math.random() * 3 + 2 + 's';
         document.body.appendChild(note);
 
-        setTimeout(() => note.remove(), 5000); // Remove the note after animation
+        setTimeout(() => note.remove(), 5000); // Remove note after animation
       }
 
-      // Toggle Notes
-      function toggleNotes(start) {
-        if (start) {
+      // Launch Notes
+      function launchNotes() {
+        if (!noteInterval) {
           noteInterval = setInterval(createNote, 500);
           output.innerHTML += `>>> Notes started!<br>`;
-        } else {
+        }
+      }
+
+      // Stop Notes
+      function stopNotes() {
+        if (noteInterval) {
           clearInterval(noteInterval);
+          noteInterval = null;
           output.innerHTML += `>>> Notes stopped!<br>`;
         }
       }
@@ -65,55 +148,45 @@
       function stopMusic() {
         if (isMusicPlaying) {
           audio.pause();
-          audio.currentTime = 0; // Reset playback
+          audio.currentTime = 0;
           isMusicPlaying = false;
         }
       }
 
-      // Process Terminal Commands
+      // Process Commands
       function processCommand(command) {
         let response = '';
         switch (command.toLowerCase()) {
           case 'help':
-            response = 'Available commands: help, about, clear, play, stop, notes start, notes stop';
+            response = 'Available commands: help, play, stop';
             break;
-          case 'about':
-            response = "Mozart's Ghost - Bringing retro vibes to life!";
-            break;
-          case 'clear':
-            output.innerHTML = '';
-            return;
           case 'play':
             playMusic();
             response = 'Playing music...';
             break;
           case 'stop':
             stopMusic();
-            response = 'Music stopped.';
+            stopNotes();
+            response = 'Music and notes stopped.';
             break;
-          case 'notes start':
-            toggleNotes(true);
-            return;
-          case 'notes stop':
-            toggleNotes(false);
-            return;
           default:
             response = `Unknown command: ${command}`;
         }
         output.innerHTML += `>>> ${command}<br>${response}<br>`;
-        output.scrollTop = output.scrollHeight;
+        output.scrollTop = output.scrollHeight; // Scroll to bottom
       }
 
       // Handle Input
-      function handleInput(event) {
+      input.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
           const command = input.value.trim();
           input.value = '';
           processCommand(command);
         }
-      }
+      });
 
-      input.addEventListener('keydown', handleInput);
+      // Handle Pi Symbol Click
+      piSymbol.addEventListener('click', launchNotes);
     })();
   </script>
 </body>
