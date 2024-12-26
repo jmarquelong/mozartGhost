@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Net App</title>
   <style>
+    /* General Styles */
     body {
       margin: 0;
       background: black;
@@ -12,10 +13,12 @@
       font-family: 'Courier New', Courier, monospace;
       text-align: center;
     }
+
     #logo {
       font-size: 3rem;
       margin: 20px;
     }
+
     #terminal {
       width: 80%;
       max-width: 800px;
@@ -25,11 +28,14 @@
       border-radius: 5px;
       box-shadow: 0 0 10px lime;
     }
+
     #output {
       overflow-y: auto;
       height: 150px;
       white-space: pre-wrap;
+      margin-bottom: 10px;
     }
+
     #input {
       width: 100%;
       border: none;
@@ -39,6 +45,7 @@
       font-size: 1.2rem;
       outline: none;
     }
+
     #pi-symbol {
       position: fixed;
       bottom: 20px;
@@ -48,10 +55,13 @@
       color: hotpink;
       text-shadow: 0 0 5px cyan, 0 0 10px lime;
     }
+
     #pi-symbol:hover {
       transform: scale(1.2);
       transition: transform 0.3s;
     }
+
+    /* Floating Notes Styles */
     .note {
       position: absolute;
       font-size: 2rem;
@@ -60,6 +70,7 @@
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
       animation: fadeInOut 5s linear, float 5s linear infinite;
     }
+
     @keyframes float {
       from {
         transform: translateY(100vh);
@@ -68,6 +79,7 @@
         transform: translateY(-10vh);
       }
     }
+
     @keyframes fadeInOut {
       0% {
         opacity: 0;
